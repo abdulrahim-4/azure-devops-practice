@@ -1,0 +1,6 @@
+@DSSIAPI_HostAddress = http://localhost:5225
+
+GET {{DSSIAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
