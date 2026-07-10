@@ -75,8 +75,13 @@ stages:
     - task: PublishBuildArtifacts@1
       displayName: 'Publish Build Artifact'
       inputs:
+        PathtoPublish: 'client/dist'
+        ArtifactName: 'clientArtifact'
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Build Artifact'
+      inputs:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
+        ArtifactName: 'serverArtifact'
 
 
 # ==========================
