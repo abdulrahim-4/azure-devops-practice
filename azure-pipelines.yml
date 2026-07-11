@@ -127,6 +127,8 @@ stages:
   jobs:
 
   - job: DeployAngular
+    pool:
+      vmImage: 'ubuntu-latest'
 
     steps:
 
