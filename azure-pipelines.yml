@@ -130,6 +130,9 @@ stages:
     pool:
       vmImage: 'ubuntu-latest'
 
+    variables:
+      - group: employee-app-variable-group
+
     steps:
 
     - download: current
