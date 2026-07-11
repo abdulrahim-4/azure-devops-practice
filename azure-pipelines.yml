@@ -5,6 +5,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
+  group: 'employee-app-variable-group'
   buildConfiguration: 'Release'
   nodeVersion: '20.x'
 
@@ -57,7 +58,7 @@ stages:
     - task: UseNode@1
       displayName: 'Install Node.js'
       inputs:
-        version: '20.x'
+        version: '$(nodeVersion)'
 
     # Install Angular Packages
     - script: |
@@ -72,55 +73,75 @@ stages:
       displayName: 'Build Angular'
 
     # Publish Artifact
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish Build Artifact'
       inputs:
-        PathtoPublish: 'client/dist'
+        targetPath: 'client/dist'
         ArtifactName: 'clientArtifact'
-    - task: PublishBuildArtifacts@1
+    - task: PublishPipelineArtifact@1
       displayName: 'Publish Build Artifact'
       inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        targetPath: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'serverArtifact'
 
 
 # ==========================
-# Deploy Dev
+# Deploy API
 # ==========================
 - stage: Deploy_Dev
-  displayName: 'Deploy to Development'
+  displayName: 'Deploy Development'
   dependsOn: Build
 
   jobs:
-  - job: DevJob
-    steps:
-    - script: echo "Deploying to Development..."
-      displayName: 'Dummy Dev Deployment'
 
+  - deployment: DeployAPI
+    displayName: 'Deploy API'
+    environment: Development
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - download: current
+            artifact: serverArtifact
+
+          - task: AzureWebApp@1
+            displayName: 'Deploy API'
+
+            inputs:
+              azureSubscription: 'AzureConnection'
+              appType: webApp
+              appName: 'employee-api-dev'
+              package: '$(Pipeline.Workspace)/serverArtifact/**/*.zip'
 
 # ==========================
-# Deploy QA
+# Deploy Client
 # ==========================
-- stage: Deploy_QA
-  displayName: 'Deploy to QA'
+- stage: Deploy_Client
+
+  displayName: 'Deploy Angular'
+
   dependsOn: Deploy_Dev
 
   jobs:
-  - job: QAJob
+
+  - job: DeployAngular
+
     steps:
-    - script: echo "Deploying to QA..."
-      displayName: 'Dummy QA Deployment'
 
+    - download: current
+      artifact: clientArtifact
 
-# ==========================
-# Deploy Production
-# ==========================
-- stage: Deploy_Production
-  displayName: 'Deploy to Production'
-  dependsOn: Deploy_QA
+    - task: AzureStaticWebApp@0
+      displayName: 'Deploy Angular'
 
-  jobs:
-  - job: ProductionJob
-    steps:
-    - script: echo "Deploying to Production..."
-      displayName: 'Dummy Production Deployment'
+      inputs:
+
+        app_location: '$(Pipeline.Workspace)/clientArtifact/dssiui/browser'
+
+        output_location: ''
+
+        skip_app_build: true
+
+        azure_static_web_apps_api_token: $(StaticWebAppToken)
