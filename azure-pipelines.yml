@@ -112,7 +112,7 @@ stages:
             inputs:
               azureSubscription: 'AzureConnection'
               appType: webApp
-              appName: 'employee-api-dev'
+              appName: 'employee-api-abdulrahim'
               package: '$(Pipeline.Workspace)/serverArtifact/**/*.zip'
 
 # ==========================
