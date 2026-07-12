@@ -139,8 +139,7 @@ stages:
       - group: employee-app-variable-group
 
     steps:
-    - checkout: self
-
+    
     - download: current
       artifact: clientArtifact
 
@@ -148,11 +147,8 @@ stages:
       displayName: 'Deploy Angular'
 
       inputs:
-
+        is_static_export: true
         app_location: 'clientArtifact/dssiui/browser'
-
         output_location: ''
-
         skip_app_build: true
-
         azure_static_web_apps_api_token: $(StaticWebAppToken)
