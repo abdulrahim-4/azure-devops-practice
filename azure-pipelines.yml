@@ -106,19 +106,14 @@ stages:
           - download: current
             artifact: serverArtifact
 
-          - script: |
-              echo "Pipeline Workspace:"
-              dir "$(Pipeline.Workspace)" /s
-            displayName: "List downloaded files"
+          - task: AzureWebApp@1
+            displayName: 'Deploy API'
 
-          # - task: AzureWebApp@1
-          #   displayName: 'Deploy API'
-
-          #   inputs:
-          #     azureSubscription: 'AzureConnection'
-          #     appType: webApp
-          #     appName: 'employee-api-abdulrahim'
-          #     package: '$(Pipeline.Workspace)/serverArtifact/**/*.zip'
+            inputs:
+              azureSubscription: 'AzureConnection'
+              appType: webApp
+              appName: 'employee-api-abdulrahim'
+              package: '$(Pipeline.Workspace)/serverArtifact/**/*.zip'
 
 # ==========================
 # Deploy Client
@@ -139,6 +134,7 @@ stages:
       - group: employee-app-variable-group
 
     steps:
+    - checkout: self
     
     - download: current
       artifact: clientArtifact
