@@ -134,6 +134,7 @@ stages:
       - group: employee-app-variable-group
 
     steps:
+    - checkout: self
 
     - download: current
       artifact: clientArtifact
