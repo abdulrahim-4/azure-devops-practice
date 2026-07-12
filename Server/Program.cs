@@ -8,9 +8,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("AngularApp",policy =>
     {
-        policy.AllowAnyOrigin()
+        policy.WithOrigins("https://purple-flower-0550ffe0f.7.azurestaticapps.net/")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
@@ -19,12 +19,16 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-app.UseCors();
+// if (app.Environment.IsDevelopment())
+// {
+//     app.UseSwagger();
+//     app.UseSwaggerUI();
+// }
+// Use CORS
+app.UseCors("AngularApp");
+app.MapGet("/", () => "API is running");
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
