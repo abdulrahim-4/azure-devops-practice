@@ -131,16 +131,24 @@ stages:
     - checkout: self
 
     - task: DownloadPipelineArtifact@2
-      displayName: 'Download Client Artifact to Custom Folder'
+      displayName: 'Download Client Artifact'
       inputs:
         buildType: 'current'
         artifactName: 'clientArtifact'
         targetPath: '$(System.DefaultWorkingDirectory)/azure-static-web-app-dist'
+
+    # --- THE TRUTH STEP ---
+    # This will print the exact folder contents to your log so we stop guessing.
+    - script: |
+        echo "=== EXACT FILE STRUCTURE INSIDE ARTIFACT FOLDER ==="
+        find $(System.DefaultWorkingDirectory)/azure-static-web-app-dist -type f
+      displayName: 'Find Actual Index.html Path'
+
     - task: AzureStaticWebApp@0
       displayName: 'Deploy Angular'
       inputs:
         azure_static_web_apps_api_token: $(StaticWebAppToken)
         skip_app_build: true
         is_static_export: true
-        app_location: 'azure-static-web-app-dist/browser'
+        app_location: 'azure-static-web-app-dist' # Run this just to let the pipeline finish
         output_location: ''
