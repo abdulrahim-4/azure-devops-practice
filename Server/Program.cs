@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp",policy =>
     {
-        policy.WithOrigins("https://purple-flower-0550ffe0f.7.azurestaticapps.net/")
+        policy.WithOrigins("https://purple-flower-0550ffe0f.7.azurestaticapps.net")
               .AllowAnyHeader()
               .AllowAnyMethod();
     });
