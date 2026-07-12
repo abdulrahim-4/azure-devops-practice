@@ -109,7 +109,7 @@ stages:
           - script: |
               echo "Pipeline Workspace:"
               dir "$(Pipeline.Workspace)" /s
-              displayName: "List downloaded files"
+            displayName: "List downloaded files"
 
           # - task: AzureWebApp@1
           #   displayName: 'Deploy API'
