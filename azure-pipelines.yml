@@ -119,32 +119,40 @@ stages:
 # Deploy Client
 # ==========================
 - stage: Deploy_Client
-
   displayName: 'Deploy Angular'
-
   dependsOn: Deploy_Dev
-
   jobs:
-
   - job: DeployAngular
     pool:
       vmImage: 'ubuntu-latest'
-
     variables:
       - group: employee-app-variable-group
-
     steps:
+    # 1. This must be here so the container has a valid repository directory to mount
     - checkout: self
-    
+
+    # 2. Download your built artifact
     - download: current
       artifact: clientArtifact
 
+    # 3. CRITICAL STEP: Copy the built files directly into the repository root folder
+    - task: CopyFiles@2
+      displayName: 'Copy Angular files into repository root'
+      inputs:
+        # Note: If your artifact targetPath in the build stage was 'client/dist', 
+        # then it contains the 'dssiui/browser' folders inside it.
+        SourceFolder: '$(Pipeline.Workspace)/clientArtifact/dssiui/browser'
+        Contents: '**'
+        TargetFolder: '$(Build.SourcesDirectory)/swa-deploy'
+
+    # 4. Deploy using the relative path inside the repository root
     - task: AzureStaticWebApp@0
       displayName: 'Deploy Angular'
-
       inputs:
-        is_static_export: true
-        app_location: 'clientArtifact/dssiui/browser'
-        output_location: ''
-        skip_app_build: true
         azure_static_web_apps_api_token: $(StaticWebAppToken)
+        skip_app_build: true
+        is_static_export: true
+        
+        # This points directly to the subfolder we just created inside /working_dir
+        app_location: 'swa-deploy' 
+        output_location: ''
