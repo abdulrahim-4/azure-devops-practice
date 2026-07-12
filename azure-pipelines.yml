@@ -135,13 +135,13 @@ stages:
       inputs:
         buildType: 'current'
         artifactName: 'clientArtifact'
-        targetPath: '$(Build.SourcesDirectory)/azure-static-web-app-dist'
+        targetPath: '$(Pipeline.Workspace)/azure-static-web-app-dist'
     - task: AzureStaticWebApp@0
       displayName: 'Deploy Angular'
       inputs:
         azure_static_web_apps_api_token: $(StaticWebAppToken)
         skip_app_build: true
         is_static_export: true
-        workingDirectory: '$(Build.SourcesDirectory)/azure-static-web-app-dist'
+        cwd: '$(Pipeline.Workspace)/azure-static-web-app-dist'
         app_location: '/'
         output_location: ''
