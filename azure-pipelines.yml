@@ -142,5 +142,6 @@ stages:
         azure_static_web_apps_api_token: $(StaticWebAppToken)
         skip_app_build: true
         is_static_export: true
-        app_location: 'azure-static-web-app-dist/browser'
+        workingDirectory: '$(Build.SourcesDirectory)/azure-static-web-app-dist'
+        app_location: '/'
         output_location: ''
